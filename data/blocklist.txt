@@ -1,0 +1,4 @@
+# One blocked term per line, lowercase. Lines starting with '#' are ignored.
+# Ships empty on purpose — add slurs/terms relevant to your community's
+# moderation policy here. Checked by src/safety_filter.py against
+# AI-generated output before it's sent.
