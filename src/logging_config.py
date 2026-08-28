@@ -30,6 +30,16 @@ def setup_logging(log_level: str = "INFO", log_file: Path | None = None) -> None
         # Already configured (e.g. re-imported in tests) — don't duplicate.
         return
 
+    # Some consoles (notably Windows' default cp1252) can't encode emoji
+    # that show up in guild/channel/member names — without this, logging
+    # such a name raises UnicodeEncodeError, which logging's own error
+    # handling then silently swallows, losing the log line entirely.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
+
     formatter = _StructuredFormatter()
 
     stream_handler = logging.StreamHandler(sys.stdout)
