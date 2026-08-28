@@ -27,15 +27,45 @@ logger = logging.getLogger(__name__)
 
 MAX_BUTTONS_PER_VIEW = 25
 
+# Discord buttons only support 5 fixed styles — there's no way to give a
+# button a custom background color. As a visual hint, we pick the closest
+# standard colored-circle emoji to each role's actual hex color instead.
+_COLOR_EMOJI_PALETTE: list[tuple[str, tuple[int, int, int]]] = [
+    ("🔴", (237, 28, 36)),
+    ("🟠", (247, 152, 29)),
+    ("🟡", (253, 203, 88)),
+    ("🟢", (120, 177, 89)),
+    ("🔵", (85, 172, 238)),
+    ("🟣", (170, 142, 214)),
+    ("🟤", (168, 112, 79)),
+    ("⚫", (49, 55, 61)),
+    ("⚪", (230, 231, 232)),
+]
+
+
+def _hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+    h = hex_color.lstrip("#")
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+
+def nearest_color_emoji(hex_color: str) -> str:
+    """Closest standard colored-circle emoji to `hex_color`, by RGB distance."""
+    r, g, b = _hex_to_rgb(hex_color)
+    return min(
+        _COLOR_EMOJI_PALETTE,
+        key=lambda entry: sum((a - c) ** 2 for a, c in zip((r, g, b), entry[1])),
+    )[0]
+
 
 def _chunk(items: list, size: int) -> list[list]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
 class ExclusiveRoleButton(discord.ui.Button):
-    def __init__(self, group_key: str, role_name: str):
+    def __init__(self, group_key: str, role_name: str, emoji: str = ""):
         super().__init__(
             label=role_name,
+            emoji=emoji or None,
             style=discord.ButtonStyle.secondary,
             custom_id=f"exclusive_role:{group_key}:{role_name}",
         )
@@ -130,10 +160,24 @@ class RolePanelView(discord.ui.View):
             self.add_item(button)
 
 
-def build_exclusive_panel_views(roles: list[cfg.ColorRole], group_key: str) -> list[RolePanelView]:
+def _exclusive_role_emoji(role: "cfg.ColorRole | cfg.ToggleRole") -> str:
+    hex_color = getattr(role, "hex_color", None)
+    if hex_color:
+        return nearest_color_emoji(hex_color)
+    return getattr(role, "emoji", "") or ""
+
+
+def build_exclusive_panel_views(
+    roles: "list[cfg.ColorRole] | list[cfg.ToggleRole]", group_key: str
+) -> list[RolePanelView]:
     pages = _chunk(roles, MAX_BUTTONS_PER_VIEW)
     return [
-        RolePanelView([ExclusiveRoleButton(group_key, role.name) for role in page])
+        RolePanelView(
+            [
+                ExclusiveRoleButton(group_key, role.name, _exclusive_role_emoji(role))
+                for role in page
+            ]
+        )
         for page in pages
     ]
 

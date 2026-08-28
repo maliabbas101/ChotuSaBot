@@ -1,9 +1,6 @@
 """One-time script: posts the region/affinity role self-assign panel.
 
-REGION_ROLES is empty by default in server_config.py for Quetta Tea Corner —
-fill it in with real sub-community names/emoji before running this.
-
-Usage: python scripts/setup_region_roles.py --channel roles
+Usage: python scripts/setup_region_roles.py --channel take-roles
 """
 
 import asyncio

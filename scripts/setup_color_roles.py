@@ -20,7 +20,11 @@ async def main() -> None:
     await post_panel(
         channel_name,
         title="Pick a color",
-        body="Click a button below to set your name color. Click it again to remove it.",
+        body=(
+            "Click a button below to set your name color. Click it again to remove it.\n"
+            "-# The circle on each button is the closest match — Discord buttons can't "
+            "show the exact shade."
+        ),
         views=views,
     )
 

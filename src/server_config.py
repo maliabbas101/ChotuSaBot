@@ -79,12 +79,41 @@ class ToggleRole:
 
 
 COLOR_ROLES: list[ColorRole] = [
+    ColorRole("Red", "#E74C3C"),
+    ColorRole("Blue", "#3498DB"),
     ColorRole("Crimson", "#DC143C"),
-    ColorRole("Ocean", "#1E90FF"),
-    ColorRole("Emerald", "#2ECC71"),
-    ColorRole("Amber", "#FFC107"),
-    ColorRole("Violet", "#8E44AD"),
-    ColorRole("Rose", "#FF6FA5"),
+    ColorRole("Emerald", "#50C878"),
+    ColorRole("Sky", "#87CEEB"),
+    ColorRole("Pearl", "#F0EAD6"),
+    ColorRole("Pink", "#FF69B4"),
+    ColorRole("Lavender", "#E6BEFF"),
+    ColorRole("Rose", "#FF007F"),
+    ColorRole("Gold", "#FFD700"),
+    ColorRole("Silver", "#C0C0C0"),
+    ColorRole("Violet", "#8A2BE2"),
+    ColorRole("Lime", "#32CD32"),
+    ColorRole("Maroon", "#3C0008"),
+    ColorRole("Plum", "#9370DB"),
+    ColorRole("Teal", "#008080"),
+    ColorRole("Tangerine", "#FF8C00"),
+    ColorRole("Gray", "#808080"),
+    ColorRole("Cream", "#F5F5DC"),
+    ColorRole("Fuchsia", "#FF1493"),
+    ColorRole("Blush", "#FFB6C1"),
+    ColorRole("Indigo", "#4B0082"),
+    ColorRole("Lilac", "#DDA0DD"),
+    ColorRole("Powder", "#ADD8E6"),
+    ColorRole("Vanilla", "#FFEFD5"),
+    ColorRole("Linen", "#FAF0E6"),
+    ColorRole("Fire", "#FF0000"),
+    ColorRole("Neon", "#00FF00"),
+    ColorRole("Plasma", "#FF00FF"),
+    ColorRole("Laser", "#00FFFF"),
+    ColorRole("Azure", "#1E90FF"),
+    ColorRole("Copper", "#A0522D"),
+    ColorRole("Sand", "#D2B48C"),
+    ColorRole("Bronze", "#CD853F"),
+    ColorRole("Taupe", "#988C7E"),
 ]
 
 NOTIFICATION_ROLES: list[ToggleRole] = [
@@ -102,10 +131,22 @@ HOBBY_ROLES: list[ToggleRole] = [
     ToggleRole("Foodie", "🍽️"),
 ]
 
-# Region/affinity roles are optional for this server — leave empty until
-# real sub-community names are provided. If populated, the role-panel setup
-# script will treat these as mutually exclusive (like color roles).
-REGION_ROLES: list[ToggleRole] = []
+# Region/affinity roles — mutually exclusive, matching roles already
+# created in Quetta Tea Corner.
+REGION_ROLES: list[ToggleRole] = [
+    ToggleRole("Karachite", "🌊"),
+    ToggleRole("Lahori", "🕌"),
+    ToggleRole("Faisalabadi", "🏭"),
+    ToggleRole("Peshawari", "🍢"),
+    ToggleRole("Multani", "🍯"),
+    ToggleRole("Islamabadi/Pindi", "🏛️"),
+    ToggleRole("Quettaite", "🍵"),
+    ToggleRole("Gujranwala", "🍗"),
+    ToggleRole("Hyderabadi", "🍚"),
+    ToggleRole("Gujrati", "🏺"),
+    ToggleRole("Jhelum", "🌉"),
+    ToggleRole("International", "🌍"),
+]
 
 
 # ---------------------------------------------------------------------------

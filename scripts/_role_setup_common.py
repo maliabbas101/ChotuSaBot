@@ -14,6 +14,13 @@ from pathlib import Path
 
 import discord
 
+# Windows consoles often default to a codepage (e.g. cp1252) that can't
+# encode emoji in server/channel names — reconfigure to UTF-8 so print()
+# doesn't raise UnicodeEncodeError and get silently swallowed by discord.py's
+# internal event-dispatch error handling.
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from config import load_settings  # noqa: E402
@@ -52,11 +59,8 @@ async def post_panel(channel_name: str, title: str, body: str, views) -> None:
                 return
 
             embed = discord.Embed(title=title, description=body, color=discord.Color.blurple())
-            for i, view in enumerate(views):
-                if i == 0:
-                    await channel.send(embed=embed, view=view)
-                else:
-                    await channel.send(content=f"{title} (page {i + 1})", view=view)
+            for view in views:
+                await channel.send(embed=embed, view=view)
             print(f"Posted panel to #{channel_name} in {guild.name}.")
         finally:
             await client.close()
