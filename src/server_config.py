@@ -56,10 +56,9 @@ ENABLE_REKHTA_COMMAND = True
 STICKY_INTRO_MESSAGE = (
     "**New here? Introduce yourself like this:** \N{TEAPOT}\n"
     "> **Naam:** your name / what to call you\n"
-    "> **Age:** (optional)\n"
+    "> **Age:** \n"
     "> **Where you're from:**\n"
-    "> **Chai order:** how you take your chai\n"
-    "> **Here for:** what brought you to the server\n"
+    "> **Gender:** \n"
     "> **Random fact about you:**"
 )
 
