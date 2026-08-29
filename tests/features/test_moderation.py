@@ -1,6 +1,10 @@
 from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock
+
+import discord
 
 import moderation
+import server_config as cfg
 
 
 def _message(content="", attachments=None, embeds=None):
@@ -85,3 +89,85 @@ def test_parse_message_link_handles_canary_and_ptb_subdomains():
 def test_parse_message_link_invalid_returns_none():
     assert moderation.parse_message_link("not a link") is None
     assert moderation.parse_message_link("https://example.com/nope") is None
+
+
+def _text_channel(category_name=None, name="general"):
+    channel = MagicMock(spec=discord.TextChannel)
+    channel.name = name
+    channel.category = SimpleNamespace(name=category_name) if category_name else None
+    return channel
+
+
+def test_is_media_channel_true_when_category_matches():
+    channel = _text_channel(category_name=cfg.MEDIA_CATEGORY_NAME)
+    assert moderation.is_media_channel(channel)
+
+
+def test_is_media_channel_false_when_category_differs():
+    channel = _text_channel(category_name="General")
+    assert not moderation.is_media_channel(channel)
+
+
+def test_is_media_channel_false_when_no_category():
+    channel = _text_channel(category_name=None)
+    assert not moderation.is_media_channel(channel)
+
+
+def test_is_media_channel_false_for_thread_without_category_attr():
+    thread = SimpleNamespace()  # discord.Thread has no `.category`
+    assert not moderation.is_media_channel(thread)
+
+
+async def _mock_message(channel, content="", attachments=None, embeds=None, author_bot=False):
+    author = MagicMock()
+    author.bot = author_bot
+    author.mention = "@someone"
+    message = MagicMock(spec=discord.Message)
+    message.channel = channel
+    message.content = content
+    message.attachments = attachments or []
+    message.embeds = embeds or []
+    message.author = author
+    message.delete = AsyncMock()
+    return message
+
+
+async def test_enforce_image_only_channel_deletes_text_only_post():
+    channel = _text_channel(category_name=cfg.MEDIA_CATEGORY_NAME)
+    channel.send = AsyncMock()
+    message = await _mock_message(channel, content="just chatting, no picture")
+
+    deleted = await moderation.enforce_image_only_channel(message)
+
+    assert deleted is True
+    message.delete.assert_called_once()
+
+
+async def test_enforce_image_only_channel_allows_image_post():
+    channel = _text_channel(category_name=cfg.MEDIA_CATEGORY_NAME)
+    message = await _mock_message(channel, attachments=[_attachment("image/png", "pic.png")])
+
+    deleted = await moderation.enforce_image_only_channel(message)
+
+    assert deleted is False
+    message.delete.assert_not_called()
+
+
+async def test_enforce_image_only_channel_ignores_channels_outside_media_category():
+    channel = _text_channel(category_name="General")
+    message = await _mock_message(channel, content="text is fine here")
+
+    deleted = await moderation.enforce_image_only_channel(message)
+
+    assert deleted is False
+    message.delete.assert_not_called()
+
+
+async def test_enforce_image_only_channel_ignores_bot_authors():
+    channel = _text_channel(category_name=cfg.MEDIA_CATEGORY_NAME)
+    message = await _mock_message(channel, content="bot text", author_bot=True)
+
+    deleted = await moderation.enforce_image_only_channel(message)
+
+    assert deleted is False
+    message.delete.assert_not_called()

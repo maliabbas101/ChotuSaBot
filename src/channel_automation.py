@@ -8,7 +8,7 @@ import discord
 
 import server_config as cfg
 from data_store import JsonDataStore
-from moderation import message_has_image
+from moderation import is_media_channel, message_has_image
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,6 @@ async def handle_message_automation(store: JsonDataStore, message: discord.Messa
         await _repost_sticky_intro(store, channel)
         return
 
-    if channel.name in cfg.IMAGE_ONLY_CHANNELS and message_has_image(message):
-        await _safe_create_thread(message, "Comments")
+    if is_media_channel(channel) and message_has_image(message):
+        await _safe_create_thread(message, f"{message.author.display_name} post")
         return

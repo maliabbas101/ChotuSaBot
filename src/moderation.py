@@ -144,8 +144,21 @@ def setup_moderation_commands(bot: commands.Bot) -> None:
             )
 
 
+def is_media_channel(channel: discord.abc.GuildChannel) -> bool:
+    """True for text channels sitting under the configured media category.
+
+    Deliberately category-based rather than a hardcoded channel name list —
+    any channel moved into (or created under) that category picks up the
+    image-only behavior automatically. A discord.Thread's `.category` is
+    always None (threads aren't direct category children), so replies inside
+    the auto-created discussion threads are naturally exempt from this check.
+    """
+    category = getattr(channel, "category", None)
+    return category is not None and category.name == cfg.MEDIA_CATEGORY_NAME
+
+
 async def enforce_image_only_channel(message: discord.Message) -> bool:
-    """Delete `message` if it's in an image-only channel and isn't an image.
+    """Delete `message` if it's in a media-category channel and isn't an image.
 
     Returns True if the message was deleted (so callers can skip further
     processing of it), False otherwise.
@@ -153,7 +166,7 @@ async def enforce_image_only_channel(message: discord.Message) -> bool:
     channel = message.channel
     if not isinstance(channel, discord.TextChannel):
         return False
-    if channel.name not in cfg.IMAGE_ONLY_CHANNELS:
+    if not is_media_channel(channel):
         return False
     if message.author.bot:
         return False

@@ -39,7 +39,12 @@ BOT_PERSONA = (
 LOG_CHANNEL = "khulla-chitta"
 CONFESSIONS_CHANNEL = "raaz-ki-baat"
 INTRO_CHANNEL = "intro"
-IMAGE_ONLY_CHANNELS = ["artnclicks", "foodie", "memes"]
+
+# Every text channel under this category is treated as media-only: text-only
+# posts get deleted, and an image post spawns a discussion thread. New
+# channels added to the category pick this up automatically — no code change
+# needed. Matched by category name via moderation.is_media_channel().
+MEDIA_CATEGORY_NAME = "Media"
 
 # Optional themed content command — Quetta Tea Corner already has a #rekhta
 # channel, so the /rekhta (random Urdu poetry) command is a natural fit.
