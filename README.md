@@ -108,7 +108,7 @@ GEMINI_API_KEY_1=
 GEMINI_API_KEY_2=
 GEMINI_API_KEY_3=
 GEMINI_API_KEY_4=
-GEMINI_MODEL=gemini-2.0-flash
+GEMINI_MODEL=gemini-3.6-flash
 
 # Optional — only needed if you swap the static question bank for a live API.
 API_NINJAS_KEY=

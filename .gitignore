@@ -5,3 +5,4 @@ __pycache__/
 data/bot_data.json
 logs/
 .pytest_cache/
+*.log

@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     gemini_api_key_2: SecretStr | None = None
     gemini_api_key_3: SecretStr | None = None
     gemini_api_key_4: SecretStr | None = None
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.6-flash"
 
     # --- Optional external content API --------------------------------------
     api_ninjas_key: SecretStr | None = None
