@@ -54,7 +54,9 @@ class ChotuBot(commands.Bot):
         self.gemini_client = api_helpers.GeminiClient(
             self.settings.gemini_api_keys, self.settings.gemini_model, self.http_session
         )
-        ai_chat.start_dead_chat_task(self, self.gemini_client)
+        # Ambient AI chat is disabled until it's been tested properly — see
+        # on_message below. /tldr still uses gemini_client normally.
+        # ai_chat.start_dead_chat_task(self, self.gemini_client)
 
         synced = await self.tree.sync()
         logger.info("Synced %d slash command(s)", len(synced))
@@ -91,11 +93,15 @@ async def on_message(message: discord.Message) -> None:
     await channel_automation.handle_message_automation(bot.store, message)
     await entertainment.check_timed_question_answer(bot.store, message)
 
-    if not message.author.bot:
-        ai_chat.record_channel_activity(message.channel.id)
-        await ai_chat.update_user_profile(bot.store, message)
-        if bot.gemini_client is not None:
-            await ai_chat.handle_ambient_reply(bot, bot.gemini_client, message)
+    # Ambient AI chat (mention/reply triggers, random drop-ins, persona
+    # profiles) is disabled until it's been tested properly and is ready to
+    # roll out. /tldr is unaffected — it calls gemini_client directly on
+    # demand and doesn't go through this block.
+    # if not message.author.bot:
+    #     ai_chat.record_channel_activity(message.channel.id)
+    #     await ai_chat.update_user_profile(bot.store, message)
+    #     if bot.gemini_client is not None:
+    #         await ai_chat.handle_ambient_reply(bot, bot.gemini_client, message)
 
 
 @bot.tree.command(name="stats", description="Show server statistics")
